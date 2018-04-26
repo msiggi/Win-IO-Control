@@ -4,7 +4,7 @@
   <mp:PhoneIdentity PhoneProductId="d5f44c97-3324-417f-8430-a63cf1268449" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>WinIoRc.BackgroundService</DisplayName>
-    <PublisherDisplayName>marce</PublisherDisplayName>
+    <PublisherDisplayName>Marcel Siegel</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
   <Dependencies>

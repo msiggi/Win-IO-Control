@@ -11,6 +11,7 @@ using Restup.Webserver.Models.Schemas;
 using Restup.Webserver.Attributes;
 using Restup.Webserver.Models.Contracts;
 using Restup.Webserver.Http;
+using Windows.Devices.Gpio;
 
 namespace WinIoRc.BackgroundService
 {
@@ -32,6 +33,7 @@ namespace WinIoRc.BackgroundService
               .EnableCors();
 
             var httpServer = new HttpServer(configuration);
+
             await httpServer.StartServerAsync();
 
         }
@@ -47,9 +49,14 @@ namespace WinIoRc.BackgroundService
     public sealed class ParameterController
     {
         [UriFormat("/setgpio/{gpio}/{state}")]
-        public IGetResponse Setgpio(int gpio, bool state)
+        public IGetResponse Setgpio(int gpioPin, bool state)
         {
-            return new GetResponse(GetResponse.ResponseStatus.OK, new DataReceived() { Gpio = gpio, State = state });
+            //var gpio = GpioController.GetDefault();
+
+            //GpioPin pin = gpio.OpenPin(gpioPin);
+            //WinIoRc.GpioHandler.GpioHandler.Set(pin, state);
+
+            return new GetResponse(GetResponse.ResponseStatus.OK, new DataReceived() { Gpio = gpioPin, State = state });
         }
     }
 }
