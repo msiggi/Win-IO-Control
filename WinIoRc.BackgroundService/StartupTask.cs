@@ -1,31 +1,56 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net.Http;
-using Windows.ApplicationModel.Background;
-using Windows.System.Threading;
-using Restup.Webserver.Rest;
-using System.Threading.Tasks;
-using Restup.Webserver.Models.Schemas;
+using NLog;
+using NLog.Config;
+using NLog.Targets;
 using Restup.Webserver.Attributes;
-using Restup.Webserver.Models.Contracts;
 using Restup.Webserver.Http;
-using Windows.Devices.Gpio;
+using Restup.Webserver.Models.Contracts;
+using Restup.Webserver.Models.Schemas;
+using Restup.Webserver.Rest;
+using System;
+using System.IO;
+using Windows.ApplicationModel.Background;
+using WinIoRc.HardwareHandler;
 
 namespace WinIoRc.BackgroundService
 {
     public sealed class StartupTask : IBackgroundTask
     {
         private BackgroundTaskDeferral _deferral;
-
+        private Logger _logger;
 
         public async void Run(IBackgroundTaskInstance taskInstance)
         {
             _deferral = taskInstance.GetDeferral();
 
+            // Log-Config:
+            Windows.Storage.StorageFolder storageFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
+            var config = new LoggingConfiguration();
+            var fileTarget = new FileTarget();
+            config.AddTarget("file", fileTarget);
+            fileTarget.FileName = Path.Combine(storageFolder.Path, "${shortdate}.log");
+            fileTarget.Layout = "${message}";
+
+            var rule = new LoggingRule("*", LogLevel.Trace, fileTarget);
+            config.LoggingRules.Add(rule);
+
+            LogManager.Configuration = config;
+
+            _logger = LogManager.GetCurrentClassLogger();
+            _logger.Trace("WinIoRc.BackgroundService started");
+
+            HardwareHandler.GpioHandler.ErrorOccured += OnErrorOccured;
+            HardwareHandler.GpioHandler.Init();
+
             var restRouteHandler = new RestRouteHandler();
-            restRouteHandler.RegisterController<ParameterController>();
+
+            try
+            {
+                restRouteHandler.RegisterController<ParameterController>();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Error starting WinIoRc.BackgroundService");
+            }
 
             var configuration = new HttpServerConfiguration()
               .ListenOnPort(8800)
@@ -35,9 +60,13 @@ namespace WinIoRc.BackgroundService
             var httpServer = new HttpServer(configuration);
 
             await httpServer.StartServerAsync();
-
+        }
+        private void OnErrorOccured(object sender, ErrorEventArgs e)
+        {
+            _logger.Error(e.Exception, e.MessageText);
         }
     }
+
 
     public sealed class DataReceived
     {
@@ -48,15 +77,34 @@ namespace WinIoRc.BackgroundService
     [RestController(InstanceCreationType.Singleton)]
     public sealed class ParameterController
     {
-        [UriFormat("/setgpio/{gpio}/{state}")]
-        public IGetResponse Setgpio(int gpioPin, bool state)
+        [UriFormat("/setgpio/{gpioPin}/{state}")]
+        public IGetResponse SetGpio(int gpioPin, bool state)
         {
-            //var gpio = GpioController.GetDefault();
+            try
+            {
+                HardwareHandler.GpioHandler.Set(gpioPin, state);
 
-            //GpioPin pin = gpio.OpenPin(gpioPin);
-            //WinIoRc.GpioHandler.GpioHandler.Set(pin, state);
+                return new GetResponse(GetResponse.ResponseStatus.OK, new DataReceived() { Gpio = gpioPin, State = state });
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
 
-            return new GetResponse(GetResponse.ResponseStatus.OK, new DataReceived() { Gpio = gpioPin, State = state });
+        [UriFormat("/togglegpio/{gpioPin}")]
+        public IGetResponse ToggleGpio(int gpioPin)
+        {
+            try
+            {
+               var state = HardwareHandler.GpioHandler.Toggle(gpioPin);
+
+                return new GetResponse(GetResponse.ResponseStatus.OK, new DataReceived() { Gpio = gpioPin, State = state });
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
     }
 }

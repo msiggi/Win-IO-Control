@@ -1,11 +1,15 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27428.2037
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinIoRc.BackgroundService", "WinIoRc.BackgroundService\WinIoRc.BackgroundService.csproj", "{BFE1C2E9-7522-43FA-9D54-C380691AB1B2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinIoRc.GpioHandler", "WinIoRc.GpioHandler\WinIoRc.GpioHandler.csproj", "{0665AFB5-54C8-4CB5-8D9D-937A3150767F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinIoRc.HardwareHandler", "WinIoRc.HardwareHandler\WinIoRc.HardwareHandler.csproj", "{0665AFB5-54C8-4CB5-8D9D-937A3150767F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4F429726-2DEE-4206-AE3A-196DD6632344}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
