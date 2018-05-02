@@ -1,7 +1,7 @@
 # Win-IO-RemoteControl
 Set and read GPIOs from Raspberry Pi@Windows 10 IoT Core per http-api. Also Read One-Wire-Values.
 
-Win-IO-RemoteControl is a minimized Background-Service for your Raspberry Pi, which allows you to separate the hardware-related components (set and get Gpio, read OneWire, ...). You can develop your non-hardware-related Software-parts in other projects independent of the Raspberr (for example in a Asp.Net-Core-App, which is maybe better for diagnostics and debugging).
+Win-IO-RemoteControl is a minimized Background-Service for your Raspberry Pi, which allows you to separate the hardware-related Software-components (set and get Gpio, read OneWire, ...). You can develop your non-hardware-related Software-parts in other projects independent of the Raspberry (for example in a Asp.Net-Core-App, which is maybe better for diagnostics and debugging).
 
 ***
 early beta-state!
