@@ -5,7 +5,7 @@ Set and read GPIOs from Raspberry Pi@Windows 10 IoT Core per http-api. Also Read
 early beta-state!
 ***
 
-# Api
+## Api
 
 ### Switch/Set GPIO #4:
 
@@ -15,7 +15,7 @@ http://[RaspiIp]:8800/api/setgpio/4/true
 
 http://[RaspiIp]:8800/api/togglegpio/4
 
-# Logging
+## Logging
 
 You can find logfiles here:
 
